@@ -5,13 +5,11 @@
 int main(int argc , char * argv[])
 {
 	int my_rank;		/* rank of process	*/
-	int p;			/* number of process	*/
-	int source;		/* rank of sender	*/
-	int dest;		/* rank of reciever	*/
-	int tag = 0;		/* tag for messages	*/
-	char message[100];	/* storage for message	*/
-	MPI_Status status;	/* return status for 	*/
-				/* recieve		*/
+	int p;			    /* number of process*/
+	int source;		    /* rank of sender	*/
+	int dest;		    /* rank of receiver	*/
+	MPI_Status status;	/* return status for receive*/
+
 
 	/* Start up MPI */
 	MPI_Init( &argc , &argv );
@@ -22,23 +20,24 @@ int main(int argc , char * argv[])
 	/* Find out number of process */
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 
+	int count = 0;
+
+	// ! Slave
 	if( my_rank != 0)
 	{
-		/* create message */
-		sprintf( message, "Greetings from process %d !",my_rank);
 		dest = 0;
-		/* use Strlen+1 to transmit /0  */
-		MPI_Send( message, strlen(message)+1, MPI_CHAR, dest, tag, MPI_COMM_WORLD);
-	}else
+        
+	}
+	// ! Master
+	else
 	{
-		for( source = 1; source < p ; source++)
-		{
-			MPI_Recv(message, 100, MPI_CHAR, source, tag, MPI_COMM_WORLD, &status );
-			printf("%s\n" , message);
-		}
+        // TODO: Get Mode
+        // TODO: Get filename OR string
+        // TODO: Split string evenly and send to slaves
+        // TODO: Receive results from slaves and print
+
 	}
 
-	/* shutdown MPI */
 	MPI_Finalize();
 	return 0;
 }
