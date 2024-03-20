@@ -26,12 +26,14 @@ int main(int argc , char * argv[])
 	if( my_rank != 0)
 	{
 		dest = 0;
+
         
 	}
 	// ! Master
 	else
 	{
         // TODO: Get Mode
+        // TODO: Get encode or decode
         // TODO: Get filename OR string
         // TODO: Split string evenly and send to slaves
         // TODO: Receive results from slaves and print
