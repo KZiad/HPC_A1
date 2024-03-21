@@ -1,23 +1,18 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdbool.h>
 #include "mpi.h"
 
 int main(int argc , char * argv[])
 {
-	int my_rank;		/* rank of process	*/
-	int p;			    /* number of process*/
-	int source;		    /* rank of sender	*/
-	int dest;		    /* rank of receiver	*/
-	MPI_Status status;	/* return status for receive*/
+	int my_rank;
+	int p;
+	int source;
+	int dest;
+	MPI_Status status;
 
 
-	/* Start up MPI */
 	MPI_Init( &argc , &argv );
-
-	/* Find out process rank */
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-
-	/* Find out number of process */
 	MPI_Comm_size(MPI_COMM_WORLD, &p);
 
 	int count = 0;
@@ -31,22 +26,39 @@ int main(int argc , char * argv[])
 		MPI_Recv(&r, 1, MPI_INT, dest, 0, MPI_COMM_WORLD, &status );
 		MPI_Recv(&x, 1, MPI_INT, dest, 1, MPI_COMM_WORLD, &status );
 
-		int min = x + (r * my_rank - 1);
+		int min = x + (r * (my_rank - 1));
 		int max = x + (r * my_rank);
 
-		// TODO: count primes in range
-		// TEMP: count will be rank + 1
-		count = my_rank + 1;
-
+		// * Find Primes in Range
+		int i;
+		for (i = min; i < max; i++){
+			bool isPrime = true;
+			if (i == 1){
+				continue;
+			}
+			int divisor;
+			for (divisor = 2; divisor <= (i / 2); divisor++){
+				if (i % divisor == 0){
+					isPrime = false;
+					break;
+				}
+			}
+			if (isPrime){
+				count++;
+			}
+		}
 		// * Send count to master
 		MPI_Send(&count, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
 	}
 	// ! Master
 	else
 	{
-		// TODO: Get X and Y
-		// TEMP: X and Y set to test values;
-		int x = 1, y = 100;
+		// * Get X and Y
+		int x, y;
+		printf("Range min (x): ");
+		scanf("%d", &x);
+		printf("Range max (y): ");
+		scanf("%d", &y);
 
 		// * Send R and X
 		int r = (y - x) / (p - 1);
@@ -63,7 +75,7 @@ int main(int argc , char * argv[])
 			printf("Total number of prime numbers in P%d is: %d\n", source, tempCount);
 			count += tempCount;
 		}
-		printf("Total number of prime numbers is: %d\n" , count);
+		printf("Total number of prime numbers between %d and %d is: %d\n", x, y, count);
 	}
 
 	MPI_Finalize();
