@@ -60,10 +60,6 @@ int main(int argc, char* argv[]) {
         // Broadcast choice to all processes
         for (int i = 1; i < p; i++) {
             MPI_Send(&choice, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
-        }
-
-        // Broadcast text to all processes
-        for (int i = 1; i < p; i++) {
             MPI_Send(text, MAX_STRING_LENGTH, MPI_CHAR, i, 1, MPI_COMM_WORLD);
         }
     } else {
@@ -74,12 +70,13 @@ int main(int argc, char* argv[]) {
 
     // Master Process
     if (my_rank == 0) {
-        // Collect results from all slave processes
         char result[MAX_STRING_LENGTH];
+        
+        // Collect results from all slave processes
         for (int i = 1; i < p; i++) {
             MPI_Recv(result, MAX_STRING_LENGTH, MPI_CHAR, i, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            // Print result from each process
         }
+        // Print result
         printf("Output: %s\n", result);
     } else {
         // Perform encryption or decryption

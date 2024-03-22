@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include "mpi.h"
 
-int countPrime(int x, int y){
+int countPrime(int lower, int upper){
 
     int prime = 0;
-    for (int i = x; i < y; i++)
+    for (int i = lower; i < upper; i++)
     {
         if(i <= 1){
             continue;
@@ -45,8 +45,8 @@ int main(int argc, char* argv[]){
         MPI_Recv(&x, 1, MPI_INT, 0, tag, MPI_COMM_WORLD, &status);
         MPI_Recv(&r, 1, MPI_INT, 0, tag, MPI_COMM_WORLD, &status);
         
-        int a = ((my_rank - 1) * r) + x, b = r + a;
-        primes = countPrime(a, b);
+        int lowerBound = ((my_rank - 1) * r) + x, upperBound = r + lowerBound;
+        primes = countPrime(lowerBound, upperBound);
         
         MPI_Send(&primes, 1, MPI_INT, 0, tag, MPI_COMM_WORLD);
 
