@@ -27,20 +27,33 @@ void decrypt(char* text) {
 
 int main(int argc, char* argv[]) {
     int my_rank, p;
+    FILE *fptr;
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &p);
 
-    char text[MAX_STRING_LENGTH];
-    int choice;
+    char text[MAX_STRING_LENGTH], filename[MAX_STRING_LENGTH];
+    int choice, mode;
 
     if (my_rank == 0) {
         // Master Process
-        printf("Enter text to encrypt/decrypt: ");
-        fgets(text, MAX_STRING_LENGTH, stdin);
+        printf("Read from file (1) or Enter text (2): ");
+        scanf("%d", &mode);
+
+        if (mode == 1){
+            printf("Enter file name: ");
+            scanf("%s", filename);
+            
+            fptr = fopen(filename, "r");
+            fgets(text, MAX_STRING_LENGTH, fptr);
+        }
+        else{
+            printf("Enter text to encrypt/decrypt: ");
+            fgets(text, MAX_STRING_LENGTH, stdin);
+        }
 
         // Get user's choice for encryption/decryption
-        printf("Enter 1 for encryption or 2 for decryption: ");
+        printf("Encryption (1) or Decryption (2): ");
         scanf("%d", &choice);
         getchar(); // Consume newline character
 
