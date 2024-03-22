@@ -33,7 +33,7 @@ int main(int argc , char * argv[])
 		int i;
 		for (i = min; i < max; i++){
 			bool isPrime = true;
-			if (i == 1){
+			if (i == 1 || i == x){
 				continue;
 			}
 			int divisor;
